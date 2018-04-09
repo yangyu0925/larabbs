@@ -30,5 +30,24 @@ class TopicObserver
     public function deleted(Topic $topic)
     {
         \DB::table('replies')->where('topic_id', $topic->id)->delete();
+
+        $this->delete_notification($topic);
+    }
+
+    /**
+     * @author yyang
+     * @date
+     * @param Topic $topic
+     */
+    private function delete_notification(Topic $topic)
+    {
+        $user = $topic->user;
+
+        foreach ($user->notifications as $notification) {
+            if ($notification->data['topic_id'] == $topic->id) {
+                $notification->delete();
+                $user->decrement('notification_count', 1);
+            }
+        }
     }
 }

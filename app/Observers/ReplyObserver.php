@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Reply;
+use App\Models\User;
 use App\Notifications\TopicReplied;
 
 // creating, created, updating, updated, saving,
@@ -26,6 +27,35 @@ class ReplyObserver
 
     public function deleted(Reply $reply)
     {
+        $this->deleteNorification($reply);
+
+        $this->peply($reply);
+    }
+
+    /**
+     * @author yyang
+     * @date
+     * @param Reply $reply
+     */
+    private function peply(Reply $reply)
+    {
         $reply->topic->decrement('reply_count', 1);
+    }
+
+    /**
+     * @author yyang
+     * @date
+     * @param Reply $reply
+     */
+    private function deleteNorification(Reply $reply)
+    {
+        $user = $reply->topic->user;
+
+        foreach ($user->notifications as $notification) {
+            if ($notification->data['reply_id'] == $reply->id) {
+                $notification->delete();
+                $user->decrement('notification_count', 1);
+            }
+        }
     }
 }
