@@ -60,7 +60,7 @@
 
                             @can('manage_contents')
                                 <li>
-                                    <a href="{{ url(config('administrator.uri').'/users/'.Auth::id()) }}">
+                                    <a href="{{ url(config('administrator.uri')) }}">
                                         <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span>
                                         管理后台
                                     </a>
